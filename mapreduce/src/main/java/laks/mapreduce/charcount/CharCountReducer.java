@@ -1,7 +1,7 @@
 /**
  * 
  */
-package laks.mapreduce.charcount.reduce;
+package laks.mapreduce.charcount;
 
 import java.io.IOException;
 
