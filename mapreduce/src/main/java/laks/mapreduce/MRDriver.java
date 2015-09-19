@@ -4,9 +4,12 @@ import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.ArrayWritable;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.chain.ChainReducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
@@ -16,6 +19,10 @@ import laks.mapreduce.charcount.CharCountMapper;
 import laks.mapreduce.charcount.CharCountReducer;
 import laks.mapreduce.dna.DNAMapper;
 import laks.mapreduce.dna.DNAReducer;
+import laks.mapreduce.suggestions.AllSuggestionsReducer;
+import laks.mapreduce.suggestions.NextWordMapper;
+import laks.mapreduce.suggestions.NextWordReducer;
+import laks.mapreduce.suggestions.Top5SuggestionsReducer;
 
 
 /**
@@ -73,14 +80,23 @@ public class MRDriver
 			job.setMapOutputValueClass(Text.class);
 			
 			
-		}else{
+		}else if("suggestions".equals(args[0])){
+			
+			/*
+			 * A file contains the DNA sequence of people. Find all the people 
+			 * who have same or mirror image of DNAs.
+			 */
+
+			job.setMapperClass(NextWordMapper.class);
+			ChainReducer.setReducer(job, NextWordReducer.class, Text.class, Text.class, Text.class, MapWritable.class, conf);
+			ChainReducer.setReducer(job, AllSuggestionsReducer.class, Text.class, MapWritable.class, Text.class, MapWritable.class, conf);
+			ChainReducer.setReducer(job, Top5SuggestionsReducer.class, Text.class, MapWritable.class, Text.class, ArrayWritable.class, conf);
+			
+		}
+		else{
 			System.out.printf("Unknown MR program\n");
 			System.exit(-1);
 		}
-		
-		
-
-		
 		
 		//job.setInputFormatClass(FixedLengthInputFormat.class);
 		//FixedLengthInputFormat.setRecordLength(conf, 15);
