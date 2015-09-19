@@ -22,7 +22,14 @@ public class DNAMapper  extends Mapper <Object, Text, Text,Text> {
 			  
 			 String dNASeq1 = value.toString();
 			 String dNASeq2 = (new StringBuilder(dNASeq1)).reverse().toString();
-			 context.write(new Text(dNASeq1+"-"+dNASeq2), new Text(dNASeq1));
+			 String newKey = null;
+			 
+			 if (dNASeq1.compareTo(dNASeq2) ==-1) {
+				newKey = dNASeq1;
+			 }else
+				 newKey = dNASeq2;
+				 
+			 context.write(new Text(newKey), new Text(dNASeq1));
 			
 		}
 	 }

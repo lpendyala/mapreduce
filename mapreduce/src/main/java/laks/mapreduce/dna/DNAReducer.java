@@ -12,17 +12,17 @@ import org.apache.hadoop.mapreduce.Reducer;
  * @author Laks.Pendyala
  *
  */
-public class DNAReducer extends Reducer<String, String, Text, Text> {
+public class DNAReducer extends Reducer<Text, Text, Text, Text> {
 
 	 @Override
-	  public void reduce(String key, Iterable<String> values, Context context) throws IOException, InterruptedException {
+	  public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 		  
 		 StringBuilder dnaGroup = new StringBuilder();
 		  
-		  for(String value:values)
+		  for(Text value:values)
 		  {
-			  dnaGroup.append("\t"+value);
+			  dnaGroup.append("\t"+value.toString());
 		  }
-		  context.write(new Text(key), new Text(dnaGroup.toString()));
+		  context.write(key, new Text(dnaGroup.toString()));
 	  }
 }
