@@ -83,13 +83,16 @@ public class MRDriver
 		}else if("suggestions".equals(args[0])){
 			
 			/*
-			 * A file contains the DNA sequence of people. Find all the people 
-			 * who have same or mirror image of DNAs.
+			 * Top 5 word suggestions based on data in a file
 			 */
-
+			
+			// Map each word with its next word
 			job.setMapperClass(NextWordMapper.class);
+			// Reduce to a map of next words and its count
 			ChainReducer.setReducer(job, NextWordReducer.class, Text.class, Text.class, Text.class, MapWritable.class, conf);
+			// Reduce to a map of unique suggestions and its count
 			ChainReducer.setReducer(job, AllSuggestionsReducer.class, Text.class, MapWritable.class, Text.class, MapWritable.class, conf);
+			// Reduce to a map top 5 suggestions
 			ChainReducer.setReducer(job, Top5SuggestionsReducer.class, Text.class, MapWritable.class, Text.class, ArrayWritable.class, conf);
 			
 		}
